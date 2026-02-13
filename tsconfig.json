@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler", /* أو "node" إذا كنت تستخدم إصداراً قديماً */
+    "allowSyntheticDefaultImports": true, /* لحل مشكلة استيراد React */
+    "esModuleInterop": true,
+    "jsx": "react-jsx",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    },
+    "skipLibCheck": true,
+    "strict": true
+  }
+}

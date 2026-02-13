@@ -1,0 +1,141 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =============================
+   FullCalendar Custom Styling
+   ============================= */
+
+/* العام */
+.fc {
+  @apply font-sans;
+}
+
+/* Toolbar */
+.fc .fc-toolbar-title {
+  @apply text-xl font-bold text-slate-800;
+}
+
+.fc .fc-button {
+  @apply bg-sky-500 border-none rounded-lg px-3 py-1 text-white font-medium transition;
+}
+
+.fc .fc-button:hover {
+  @apply bg-sky-600;
+}
+
+/* DayGrid Events */
+.fc .fc-daygrid-event {
+  @apply rounded-md px-1 py-0.5 text-xs font-medium;
+}
+
+/* Table borders */
+.fc-theme-standard td,
+.fc-theme-standard th {
+  @apply border-slate-200;
+}
+
+/* Day numbers */
+.fc-daygrid-day-number {
+  @apply text-slate-600 font-medium;
+}
+
+/* Column headers */
+.fc-col-header-cell-cushion {
+  @apply text-slate-500 font-semibold;
+}
+
+/* =============================
+   Dark Mode
+   ============================= */
+.dark .fc {
+  @apply text-slate-200;
+}
+
+.dark .fc-theme-standard td,
+.dark .fc-theme-standard th {
+  @apply border-slate-700;
+}
+
+.dark .fc-toolbar-title {
+  @apply text-white;
+}
+
+.dark .fc-button {
+  @apply bg-sky-600 text-white;
+}
+
+.dark .fc-button:hover {
+  @apply bg-sky-700;
+}
+
+.dark .fc-daygrid-day {
+  @apply bg-slate-800;
+}
+
+.dark .fc-day-today {
+  @apply bg-slate-700;
+}
+
+.dark .fc-daygrid-event {
+  @apply bg-sky-500 border-none;
+}
+
+.dark .fc-col-header-cell-cushion {
+  @apply text-slate-300;
+}
+
+.dark .fc-daygrid-day-number {
+  @apply text-slate-400;
+}
+
+/* =============================
+   Sidebar & Task Cards
+   ============================= */
+.sidebar {
+  @apply w-96 flex flex-col gap-5;
+}
+
+.sidebar h2 {
+  @apply text-xl font-bold;
+}
+
+.sidebar-card {
+  @apply bg-white dark:bg-slate-800 rounded-xl shadow-md p-5;
+}
+
+.sidebar-card h3 {
+  @apply font-semibold mb-2 text-slate-700 dark:text-slate-200;
+}
+
+.sidebar-card ul {
+  @apply list-disc pl-5 text-sm text-slate-600 dark:text-slate-300 space-y-1;
+}
+
+.toggle label {
+  @apply flex items-center justify-between text-slate-700 dark:text-slate-200 font-medium cursor-pointer;
+}
+
+.event-item {
+  @apply bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl p-4 shadow-sm hover:shadow-md transition flex flex-col;
+}
+
+.event-item .event-date {
+  @apply text-xs text-slate-500 dark:text-slate-300 mb-1;
+}
+
+.event-item .event-title {
+  @apply text-sm font-semibold text-slate-800 dark:text-slate-100 mb-3;
+}
+
+.event-item button {
+  @apply flex-1 text-xs font-semibold py-1.5 rounded-lg transition;
+}
+
+.event-item button.edit {
+  @apply bg-amber-400 hover:bg-amber-500 text-white;
+}
+
+.event-item button.delete {
+  @apply bg-red-500 hover:bg-red-600 text-white;
+}
