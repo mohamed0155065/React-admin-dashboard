@@ -4,20 +4,22 @@ import { RegisterForm } from './RegisterForm';
 import ShieldIcon from '@mui/icons-material/Shield';
 
 export default function RegisterPage() {
-    const theme = useTheme();
+    const theme = useTheme(); // Get current MUI theme (light/dark mode)
 
     return (
+        // Main container: center the form both vertically and horizontally
         <Box sx={{
-            bgcolor: 'transparent', // Inherits from App.tsx background
+            bgcolor: 'transparent', // Inherit background from App.tsx
             height: '100%',
             width: '100%',
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            // Preventing global scroll by managing padding
-            py: { xs: 2, md: 0 },
+            py: { xs: 2, md: 0 }, // Add vertical padding on small screens
         }}>
+            {/* Container with max width to prevent overly wide form */}
             <Container maxWidth="sm">
+                {/* Paper: card-like container for the registration form */}
                 <Paper
                     elevation={0}
                     sx={{
@@ -27,18 +29,17 @@ export default function RegisterPage() {
                         justifyContent: 'center',
                         borderRadius: 5,
                         border: '1px solid',
-                        borderColor: 'divider',
-                        bgcolor: 'background.paper',
+                        borderColor: 'divider', // Theme-aware border
+                        bgcolor: 'background.paper', // Theme-aware background
                         backgroundImage: 'none',
                         overflow: 'hidden',
                         boxShadow: theme.palette.mode === 'dark'
                             ? '0 25px 50px -12px rgba(0, 0, 0, 0.5)'
                             : '0 25px 50px -12px rgba(0,0,0,0.05)',
-                        p: { xs: 3, sm: 6 },
-                        // Ensures the paper itself doesn't cause overflow on small screens
-                        maxHeight: 'calc(100vh - 100px)',
-                        overflowY: 'auto',
-                        // Custom scrollbar for the internal paper if needed
+                        p: { xs: 3, sm: 6 }, // Padding inside the card
+                        maxHeight: 'calc(100vh - 100px)', // Prevent overflow on tall screens
+                        overflowY: 'auto', // Scroll if content exceeds max height
+                        // Custom scrollbar styling
                         '&::-webkit-scrollbar': { width: '4px' },
                         '&::-webkit-scrollbar-thumb': {
                             backgroundColor: alpha(theme.palette.primary.main, 0.2),
@@ -46,7 +47,9 @@ export default function RegisterPage() {
                         },
                     }}
                 >
+                    {/* Icon + Header */}
                     <Stack alignItems="center" spacing={2} mb={4}>
+                        {/* Shield icon in a colored circle */}
                         <Box sx={{
                             p: 2,
                             bgcolor: alpha(theme.palette.primary.main, 0.1),
@@ -57,6 +60,8 @@ export default function RegisterPage() {
                         }}>
                             <ShieldIcon fontSize="large" />
                         </Box>
+
+                        {/* Title + Subtitle */}
                         <Box textAlign="center">
                             <Typography variant="h4" fontWeight={900} letterSpacing="-0.03em" color="text.primary">
                                 Profile Security
@@ -67,10 +72,12 @@ export default function RegisterPage() {
                         </Box>
                     </Stack>
 
+                    {/* Registration form component */}
                     <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                         <RegisterForm />
                     </Box>
 
+                    {/* Footer / session info */}
                     <Typography
                         variant="caption"
                         display="block"
