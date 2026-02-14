@@ -3,50 +3,62 @@ import {
     Box, Typography, IconButton, Tooltip, Paper,
     alpha, Stack, useTheme, useMediaQuery
 } from '@mui/material';
+// DataGrid components from MUI
 import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import PersonIcon from '@mui/icons-material/Person';
 import SecurityIcon from '@mui/icons-material/Security';
 
+// Webhook URL to fetch data
 const WEBHOOK_URL = 'https://n8n-production-b3b68.up.railway.app/webhook/f1715ca1-a8ae-45bc-8f82-54f4b8fd2564';
 
 export default function Groups() {
+    // State to store rows fetched from API
     const [rows, setRows] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+
+    // MUI theme and responsive breakpoint
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
+    // Function to fetch users from API
     const fetchUsers = async () => {
         try {
-            setLoading(true);
+            setLoading(true); // start loading spinner
             const res = await fetch(WEBHOOK_URL, {
                 method: 'GET',
                 headers: { 'ngrok-skip-browser-warning': '69420' },
             });
             let data = await res.json();
+
+            // Ensure data is array
             if (!Array.isArray(data)) data = [data];
 
+            // Filter out entries without name
             const filtered = data.filter((item: any) => item.name && item.name.trim() !== '');
 
+            // Map data into table rows
             const mapped = filtered.map((item: any, index: number) => ({
-                _rowId: index + 1,
-                displayId: index + 1,
-                name: item.name.trim(),        // ← زي ما بييجي من الـ API
-                email: item.email || '—',      // ← زي ما بييجي من الـ API
-                phone: item.Phone || '—',      // ← زي ما بييجي من الـ API
-                access: item.Access || 'User', // ← زي ما بييجي من الـ API
+                _rowId: index + 1,                 // internal ID for DataGrid
+                displayId: index + 1,              // visible ID column
+                name: item.name.trim(),            // user full name
+                email: item.email || '—',          // fallback if email missing
+                phone: item.Phone || '—',          // fallback if phone missing
+                access: item.Access || 'User',     // default role
             }));
 
-            setRows(mapped);
+            setRows(mapped); // update state
         } catch (err) {
             console.error("Fetch Error:", err);
         } finally {
-            setLoading(false);
+            setLoading(false); // stop loading spinner
         }
     };
 
+    // Fetch users once component mounts
     useEffect(() => { fetchUsers(); }, []);
 
+    // Define columns for DataGrid
     const columns: GridColDef[] = useMemo(() => [
         {
             field: 'displayId',
@@ -54,7 +66,7 @@ export default function Groups() {
             width: 70,
             renderCell: (p) => (
                 <Typography sx={{ color: 'text.secondary', fontWeight: 700, fontSize: '0.8rem' }}>
-                    {p.value}
+                    {p.value} {/* Show row ID */}
                 </Typography>
             )
         },
@@ -65,7 +77,7 @@ export default function Groups() {
             minWidth: 180,
             renderCell: (p) => (
                 <Typography sx={{ fontWeight: 600, color: 'text.primary', fontSize: '0.85rem' }}>
-                    {p.value}
+                    {p.value} {/* User's full name */}
                 </Typography>
             )
         },
@@ -79,7 +91,7 @@ export default function Groups() {
                     color: '#3b82f6', fontSize: '0.85rem',
                     cursor: 'pointer', '&:hover': { textDecoration: 'underline' }
                 }}>
-                    {p.value}
+                    {p.value} {/* Clickable email */}
                 </Typography>
             )
         },
@@ -89,7 +101,7 @@ export default function Groups() {
             width: 150,
             renderCell: (p) => (
                 <Typography sx={{ color: 'text.secondary', fontSize: '0.85rem' }}>
-                    {p.value}
+                    {p.value} {/* User phone */}
                 </Typography>
             )
         },
@@ -102,12 +114,11 @@ export default function Groups() {
             renderCell: ({ value }) => {
                 const role = value?.toLowerCase();
                 const isAdmin = role === 'admin' || role === 'manager';
-                const color = isAdmin ? '#10b981' : '#3b82f6';
+                const color = isAdmin ? '#10b981' : '#3b82f6'; // green for admin, blue for user
                 return (
                     <Box sx={{
                         display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1,
-                        width: 100,          // ← عرض ثابت لكل الـ badges
-                        py: 0.5,
+                        width: 100, py: 0.5,
                         bgcolor: alpha(color, 0.1),
                         color,
                         borderRadius: '6px',
@@ -115,6 +126,7 @@ export default function Groups() {
                         fontSize: '0.7rem',
                         fontWeight: 800
                     }}>
+                        {/* Icon based on role */}
                         {isAdmin
                             ? <SecurityIcon sx={{ fontSize: 14 }} />
                             : <PersonIcon sx={{ fontSize: 14 }} />
@@ -129,11 +141,12 @@ export default function Groups() {
     return (
         <Box sx={{
             p: { xs: 2, sm: 3, md: 5 },
-            bgcolor: 'background.default',     // ← theme-aware
+            bgcolor: 'background.default', // theme-aware background
             minHeight: '100vh',
-            color: 'text.primary',             // ← theme-aware
+            color: 'text.primary',         // theme-aware text color
             transition: 'background-color 0.3s ease',
         }}>
+            {/* Header section */}
             <Stack
                 direction={{ xs: 'column', sm: 'row' }}
                 justifyContent="space-between"
@@ -149,12 +162,13 @@ export default function Groups() {
                         Manage corporate roles, permissions, and directory.
                     </Typography>
                 </Box>
+                {/* Refresh button */}
                 <Tooltip title="Sync with Server">
                     <IconButton onClick={fetchUsers} sx={{
-                        bgcolor: 'background.paper',   // ← theme-aware
+                        bgcolor: 'background.paper',
                         color: '#3b82f6',
                         border: '1px solid',
-                        borderColor: 'divider',        // ← theme-aware
+                        borderColor: 'divider',
                         '&:hover': { bgcolor: 'action.hover' }
                     }}>
                         <RefreshIcon />
@@ -162,12 +176,14 @@ export default function Groups() {
                 </Tooltip>
             </Stack>
 
+            {/* DataGrid container */}
             <Paper sx={{
-                height: 'calc(100vh - 220px)', width: '100%',
-                bgcolor: 'background.paper',           // ← theme-aware
+                height: 'calc(100vh - 220px)',
+                width: '100%',
+                bgcolor: 'background.paper',
                 borderRadius: 4,
                 border: '1px solid',
-                borderColor: 'divider',                // ← theme-aware
+                borderColor: 'divider',
                 overflow: 'hidden',
                 backgroundImage: 'none',
                 boxShadow: theme.palette.mode === 'dark'
@@ -175,14 +191,14 @@ export default function Groups() {
                     : '0 20px 25px -5px rgba(0,0,0,0.1)',
             }}>
                 <DataGrid
-                    rows={rows}
-                    columns={columns}
-                    loading={loading}
-                    getRowId={(row) => row._rowId}
-                    slots={{ toolbar: GridToolbar }}
+                    rows={rows}                    // data rows
+                    columns={columns}              // table columns
+                    loading={loading}              // show loading spinner
+                    getRowId={(row) => row._rowId} // unique row ID
+                    slots={{ toolbar: GridToolbar }} // show default toolbar
                     slotProps={{
                         toolbar: {
-                            showQuickFilter: true,
+                            showQuickFilter: true, // quick search box
                             quickFilterProps: { debounceMs: 500 },
                             sx: {
                                 p: 2,
