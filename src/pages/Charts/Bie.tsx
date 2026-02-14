@@ -1,28 +1,35 @@
 import React from 'react';
-import { Box, Paper, Typography, useTheme, alpha } from '@mui/material';
+import { Box, Paper, Typography, useTheme } from '@mui/material';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { useInvoices } from './InvoiceContext';
 
-// أبقيت على ألوان الحالات لأنها تعبر عن المعنى (نجاح، تحذير، خطر) 
-// لكن يمكن دمجها مع التيم لاحقاً إذا أردت
+/**
+ * Status colors: Paid, Pending, Overdue
+ * These colors indicate status meaning but can be synced with theme later
+ */
 const STATUS_COLORS = { Paid: '#10b981', Pending: '#f59e0b', Overdue: '#ef4444' };
 
+/**
+ * StatusPie Component
+ * - Displays invoice distribution by status in a Pie chart
+ * - Maintains original styling and logic
+ */
 export default function StatusPie() {
-    const { invoices } = useInvoices();
-    const theme = useTheme();
+    const { invoices } = useInvoices(); // Get invoices from context
+    const theme = useTheme(); // Access MUI theme
 
-    const chartData = Object.values(invoices.reduce((acc: any, curr: any) => {
-        if (!acc[curr.status]) acc[curr.status] = { name: curr.status, value: 0 };
-        acc[curr.status].value += 1;
-        return acc;
-    }, {}));
+    // Aggregate invoices by status
+    const chartData = Object.values(
+        invoices.reduce((acc: any, curr: any) => {
+            if (!acc[curr.status]) acc[curr.status] = { name: curr.status, value: 0 };
+            acc[curr.status].value += 1;
+            return acc;
+        }, {})
+    );
 
     return (
-        <Box sx={{
-            width: '100%',
-            bgcolor: 'transparent',
-            // إزالة الـ minHeight والـ padding الكبير لمنع الـ scroll
-        }}>
+        <Box sx={{ width: '100%', bgcolor: 'transparent' }}>
+            {/* ===== Section Title ===== */}
             <Typography
                 variant="h4"
                 fontWeight={800}
@@ -30,23 +37,28 @@ export default function StatusPie() {
                 color="text.primary"
                 sx={{ letterSpacing: '-0.02em' }}
             >
-                Invoice <span style={{ color: '#10b981' }}>Status</span>
+                Invoice <span style={{ color: STATUS_COLORS.Paid }}>Status</span>
             </Typography>
 
-            <Paper sx={{
-                p: { xs: 2, md: 4 },
-                bgcolor: 'background.paper',
-                border: '1px solid',
-                borderColor: 'divider',
-                borderRadius: 4,
-                backgroundImage: 'none',
-                boxShadow: theme.palette.mode === 'dark'
-                    ? '0 20px 25px -5px rgba(0,0,0,0.3)'
-                    : '0 10px 15px -3px rgba(0,0,0,0.05)'
-            }}>
+            {/* ===== Card Container ===== */}
+            <Paper
+                sx={{
+                    p: { xs: 2, md: 4 },
+                    bgcolor: 'background.paper',
+                    border: '1px solid',
+                    borderColor: 'divider',
+                    borderRadius: 4,
+                    backgroundImage: 'none',
+                    boxShadow:
+                        theme.palette.mode === 'dark'
+                            ? '0 20px 25px -5px rgba(0,0,0,0.3)'
+                            : '0 10px 15px -3px rgba(0,0,0,0.05)'
+                }}
+            >
                 <Box sx={{ width: '100%', height: 400 }}>
                     <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
+                            {/* Pie slices */}
                             <Pie
                                 data={chartData}
                                 innerRadius={100}
@@ -62,6 +74,8 @@ export default function StatusPie() {
                                     />
                                 ))}
                             </Pie>
+
+                            {/* Tooltip */}
                             <Tooltip
                                 contentStyle={{
                                     backgroundColor: theme.palette.background.paper,
@@ -71,6 +85,8 @@ export default function StatusPie() {
                                 }}
                                 itemStyle={{ color: theme.palette.text.primary }}
                             />
+
+                            {/* Legend */}
                             <Legend
                                 iconType="circle"
                                 formatter={(value) => (
