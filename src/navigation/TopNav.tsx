@@ -1,11 +1,7 @@
 import * as React from 'react';
 import { useState, useEffect, useRef } from 'react';
-
-// MUI styling
 import { styled, useTheme, alpha, Theme } from '@mui/material/styles';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
-
-// MUI layout & UI
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Box from '@mui/material/Box';
@@ -21,14 +17,10 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Chip from '@mui/material/Chip';
-
-// Search
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
 import InputAdornment from '@mui/material/InputAdornment';
-
-// Icons
 import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
@@ -44,7 +36,7 @@ import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 const DRAWER_WIDTH = 260;
 const COLLAPSED_WIDTH = 72;
 
-// ================== Types ==================
+// ================== Type Definitions ==================
 interface AppBarStyledProps extends MuiAppBarProps {
     open?: boolean;
     ismobile?: string;
@@ -77,25 +69,24 @@ const mockNotifications: Notification[] = [
     { id: 4, title: 'Deployment Done', description: 'v2.4.1 deployed successfully.', time: '3 hr ago', read: true, color: '#8b5cf6', initials: 'DD' },
 ];
 
-// ================== Styled AppBar ==================
+// ================== Styled Components ==================
+
+// AppBar with responsive width for mobile / collapsed / open
 const StyledAppBar = styled(MuiAppBar, {
     shouldForwardProp: (prop) => prop !== 'open' && prop !== 'ismobile',
 })<AppBarStyledProps>(({ theme, open, ismobile }) => ({
     zIndex: theme.zIndex.drawer + 1,
     backdropFilter: 'blur(12px)',
-    background:
-        theme.palette.mode === 'dark'
-            ? 'rgba(15, 23, 42, 0.85)'
-            : 'rgba(255, 255, 255, 0.88)',
-    borderBottom: `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.07)'
-        }`,
+    background: theme.palette.mode === 'dark'
+        ? 'rgba(15, 23, 42, 0.85)'
+        : 'rgba(255, 255, 255, 0.88)',
+    borderBottom: `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.07)'}`,
     boxShadow: 'none',
     color: theme.palette.mode === 'dark' ? '#f1f5f9' : '#1e293b',
-    // Mobile: no offset at all
-    ...(ismobile === 'true' && {
-        marginLeft: 0,
-        width: '100%',
-    }),
+
+    // Mobile
+    ...(ismobile === 'true' && { marginLeft: 0, width: '100%' }),
+
     // Desktop collapsed
     ...(ismobile !== 'true' && !open && {
         marginLeft: COLLAPSED_WIDTH,
@@ -105,6 +96,7 @@ const StyledAppBar = styled(MuiAppBar, {
             duration: theme.transitions.duration.leavingScreen,
         }),
     }),
+
     // Desktop open
     ...(ismobile !== 'true' && open && {
         marginLeft: DRAWER_WIDTH,
@@ -116,18 +108,14 @@ const StyledAppBar = styled(MuiAppBar, {
     }),
 }));
 
-// ================== Search Box ==================
+// Search Input
 const SearchBox = styled(TextField)(({ theme }: { theme: Theme }) => ({
     '& .MuiOutlinedInput-root': {
         borderRadius: '10px',
         fontSize: 13.5,
-        background:
-            theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)',
+        background: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)',
         transition: 'all 0.2s ease',
-        '& fieldset': {
-            border: `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'
-                }`,
-        },
+        '& fieldset': { border: `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}` },
         '&:hover fieldset': { borderColor: theme.palette.primary.main },
         '&.Mui-focused': {
             background: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.09)' : '#fff',
@@ -138,7 +126,7 @@ const SearchBox = styled(TextField)(({ theme }: { theme: Theme }) => ({
     '& input::placeholder': { fontSize: 13.5, opacity: 0.6 },
 }));
 
-// ================== Nav Icon Button ==================
+// IconButton with hover & theme styling
 const NavIconButton = styled(IconButton)(({ theme }: { theme: Theme }) => ({
     width: 36,
     height: 36,
@@ -146,8 +134,7 @@ const NavIconButton = styled(IconButton)(({ theme }: { theme: Theme }) => ({
     color: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.75)' : 'rgba(0,0,0,0.6)',
     transition: 'all 0.2s ease',
     '&:hover': {
-        background:
-            theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)',
+        background: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)',
         color: theme.palette.primary.main,
     },
 }));
@@ -161,10 +148,7 @@ interface NotifPopoverProps {
 }
 
 const NotificationsPopover: React.FC<NotifPopoverProps> = ({
-    anchorEl,
-    onClose,
-    notifications,
-    onMarkAllRead,
+    anchorEl, onClose, notifications, onMarkAllRead,
 }) => {
     const theme = useTheme();
     const unread = notifications.filter((n) => !n.read).length;
@@ -179,22 +163,18 @@ const NotificationsPopover: React.FC<NotifPopoverProps> = ({
             PaperProps={{
                 sx: {
                     mt: 1, width: 340, borderRadius: '14px',
-                    border: `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'
-                        }`,
-                    boxShadow:
-                        theme.palette.mode === 'dark' ? '0 16px 48px rgba(0,0,0,0.5)' : '0 16px 48px rgba(0,0,0,0.12)',
+                    border: `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}`,
+                    boxShadow: theme.palette.mode === 'dark' ? '0 16px 48px rgba(0,0,0,0.5)' : '0 16px 48px rgba(0,0,0,0.12)',
                     background: theme.palette.mode === 'dark' ? '#1e293b' : '#fff',
                     overflow: 'hidden',
                 },
             }}
         >
-            <Box sx={{ px: 2.5, py: 1.75, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            {/* Header with unread count */}
+            <Box sx={{ px: 2.5, py: 1.75, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <Typography fontWeight={700} fontSize={14}>Notifications</Typography>
-                    {unread > 0 && (
-                        <Chip label={unread} size="small" color="error"
-                            sx={{ height: 18, fontSize: 10, '& .MuiChip-label': { px: 0.75 } }} />
-                    )}
+                    {unread > 0 && <Chip label={unread} size="small" color="error" sx={{ height: 18, fontSize: 10, '& .MuiChip-label': { px: 0.75 } }} />}
                 </Box>
                 <Tooltip title="Mark all as read">
                     <span>
@@ -207,18 +187,18 @@ const NotificationsPopover: React.FC<NotifPopoverProps> = ({
 
             <Divider sx={{ opacity: 0.5 }} />
 
+            {/* List of notifications */}
             <List disablePadding sx={{ maxHeight: 320, overflowY: 'auto' }}>
                 {notifications.map((notif, idx) => (
                     <React.Fragment key={notif.id}>
-                        <ListItem alignItems="flex-start" sx={{
-                            px: 2.5, py: 1.5, gap: 1.5,
-                            background: !notif.read
-                                ? theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.03)' : 'rgba(25,118,210,0.03)'
-                                : 'transparent',
-                            '&:hover': {
-                                background: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.03)',
-                            },
-                        }}>
+                        <ListItem
+                            alignItems="flex-start"
+                            sx={{
+                                px: 2.5, py: 1.5, gap: 1.5,
+                                background: !notif.read ? theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.03)' : 'rgba(25,118,210,0.03)' : 'transparent',
+                                '&:hover': { background: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.03)' },
+                            }}
+                        >
                             <ListItemAvatar sx={{ minWidth: 40, mt: 0.25 }}>
                                 <Avatar sx={{ width: 36, height: 36, bgcolor: notif.color, fontSize: 11, fontWeight: 700 }}>
                                     {notif.initials}
@@ -255,20 +235,23 @@ const NotificationsPopover: React.FC<NotifPopoverProps> = ({
     );
 };
 
-// ================== Main Component ==================
+// ================== TopNav Component ==================
 const TopNav: React.FC<TopNavProps> = ({ open, handleDrawerToggle, mode, toggleMode }) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-    const [query, setQuery] = useState<string>('');
+    // ===== States =====
+    const [query, setQuery] = useState('');
     const [suggestions, setSuggestions] = useState<string[]>([]);
-    const [loading, setLoading] = useState<boolean>(false);
-    const [searchOpen, setSearchOpen] = useState<boolean>(false);
+    const [loading, setLoading] = useState(false);
+    const [searchOpen, setSearchOpen] = useState(false);
     const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
     const [notifications, setNotifications] = useState<Notification[]>(mockNotifications);
     const [notifAnchor, setNotifAnchor] = useState<HTMLElement | null>(null);
     const unreadCount = notifications.filter((n) => !n.read).length;
 
+    // ===== Search debounce =====
     useEffect(() => {
         if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
         searchTimerRef.current = setTimeout(() => {
@@ -278,7 +261,7 @@ const TopNav: React.FC<TopNavProps> = ({ open, handleDrawerToggle, mode, toggleM
         return () => { if (searchTimerRef.current) clearTimeout(searchTimerRef.current); };
     }, [query]);
 
-    const fetchSuggestions = (q: string): void => {
+    const fetchSuggestions = (q: string) => {
         setLoading(true);
         setTimeout(() => {
             setSuggestions([`${q} Developer`, `${q} Designer`, `${q} Engineer`, `${q} Manager`]);
@@ -286,25 +269,23 @@ const TopNav: React.FC<TopNavProps> = ({ open, handleDrawerToggle, mode, toggleM
         }, 500);
     };
 
-    const handleMarkAllRead = (): void =>
+    const handleMarkAllRead = () =>
         setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
 
     return (
         <>
+            {/* ===== AppBar ===== */}
             <StyledAppBar position="fixed" open={open} ismobile={String(isMobile)}>
                 <Toolbar sx={{ gap: 1, minHeight: { xs: 56, sm: 60 }, px: { xs: 1.5, sm: 2 } }}>
 
-                    {/* ── Menu toggle: always visible, icon flips with open state ── */}
+                    {/* Menu toggle */}
                     <Tooltip title={open ? 'Collapse sidebar' : 'Expand sidebar'}>
                         <NavIconButton onClick={handleDrawerToggle} edge="start">
-                            {open
-                                ? <MenuOpenIcon sx={{ fontSize: 21 }} />
-                                : <MenuIcon sx={{ fontSize: 21 }} />
-                            }
+                            {open ? <MenuOpenIcon sx={{ fontSize: 21 }} /> : <MenuIcon sx={{ fontSize: 21 }} />}
                         </NavIconButton>
                     </Tooltip>
 
-                    {/* Brand on mobile */}
+                    {/* Mobile Brand */}
                     {isMobile && (
                         <Typography fontWeight={800} fontSize={15} color="primary" sx={{ letterSpacing: '0.02em' }}>
                             Admin Panel
@@ -336,17 +317,14 @@ const TopNav: React.FC<TopNavProps> = ({ open, handleDrawerToggle, mode, toggleM
                                             ),
                                             endAdornment: (
                                                 <>
-                                                    {loading ? (
-                                                        <CircularProgress size={14} color="inherit" />
-                                                    ) : query.length > 0 ? (
-                                                        <InputAdornment position="end">
-                                                            <NavIconButton size="small"
-                                                                onClick={() => { setQuery(''); setSuggestions([]); }}
-                                                                sx={{ width: 22, height: 22 }}>
-                                                                <CloseIcon sx={{ fontSize: 13 }} />
-                                                            </NavIconButton>
-                                                        </InputAdornment>
-                                                    ) : null}
+                                                    {loading ? <CircularProgress size={14} color="inherit" /> :
+                                                        query.length > 0 && (
+                                                            <InputAdornment position="end">
+                                                                <NavIconButton size="small" onClick={() => { setQuery(''); setSuggestions([]); }} sx={{ width: 22, height: 22 }}>
+                                                                    <CloseIcon sx={{ fontSize: 13 }} />
+                                                                </NavIconButton>
+                                                            </InputAdornment>
+                                                        )}
                                                 </>
                                             ),
                                         }}
@@ -364,16 +342,13 @@ const TopNav: React.FC<TopNavProps> = ({ open, handleDrawerToggle, mode, toggleM
 
                     {!isMobile && <Box sx={{ flexGrow: 1 }} />}
 
-                    {/* Right Actions */}
+                    {/* Right Actions: Theme, Notifications, Settings, User */}
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 0.25, sm: 0.5 } }}>
 
-                        {/* ── Theme toggle: calls toggleMode from App-level state ── */}
+                        {/* Theme toggle */}
                         <Tooltip title={mode === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}>
                             <NavIconButton onClick={toggleMode}>
-                                {mode === 'dark'
-                                    ? <LightModeIcon sx={{ fontSize: 19 }} />
-                                    : <DarkModeIcon sx={{ fontSize: 19 }} />
-                                }
+                                {mode === 'dark' ? <LightModeIcon sx={{ fontSize: 19 }} /> : <DarkModeIcon sx={{ fontSize: 19 }} />}
                             </NavIconButton>
                         </Tooltip>
 
@@ -396,8 +371,7 @@ const TopNav: React.FC<TopNavProps> = ({ open, handleDrawerToggle, mode, toggleM
                             </Tooltip>
                         )}
 
-                        <Divider orientation="vertical" flexItem
-                            sx={{ mx: 0.5, opacity: 0.3, height: 22, alignSelf: 'center' }} />
+                        <Divider orientation="vertical" flexItem sx={{ mx: 0.5, opacity: 0.3, height: 22, alignSelf: 'center' }} />
 
                         {/* User */}
                         <Tooltip title="Mohamed · Admin">
@@ -405,16 +379,11 @@ const TopNav: React.FC<TopNavProps> = ({ open, handleDrawerToggle, mode, toggleM
                                 display: 'flex', alignItems: 'center', gap: 1,
                                 pl: 0.5, pr: 0.25, py: 0.5, borderRadius: '10px', cursor: 'pointer',
                                 transition: 'background 0.2s',
-                                '&:hover': {
-                                    background: mode === 'dark' ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.04)',
-                                },
+                                '&:hover': { background: mode === 'dark' ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.04)' },
                             }}>
                                 <Box sx={{ position: 'relative' }}>
                                     <Avatar src="/صوره البدله والنضاره.jpg" alt="Mohamed"
-                                        sx={{
-                                            width: 30, height: 30, border: '2px solid', borderColor: 'primary.main',
-                                            boxShadow: '0 0 0 2px rgba(25,118,210,0.2)'
-                                        }} />
+                                        sx={{ width: 30, height: 30, border: '2px solid', borderColor: 'primary.main', boxShadow: '0 0 0 2px rgba(25,118,210,0.2)' }} />
                                     <Box sx={{
                                         position: 'absolute', bottom: 0, right: 0, width: 8, height: 8,
                                         borderRadius: '50%', backgroundColor: '#22c55e',
@@ -429,10 +398,12 @@ const TopNav: React.FC<TopNavProps> = ({ open, handleDrawerToggle, mode, toggleM
                                 )}
                             </Box>
                         </Tooltip>
+
                     </Box>
                 </Toolbar>
             </StyledAppBar>
 
+            {/* Notifications Popover */}
             <NotificationsPopover
                 anchorEl={notifAnchor}
                 onClose={() => setNotifAnchor(null)}
