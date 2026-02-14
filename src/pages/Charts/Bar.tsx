@@ -12,16 +12,21 @@ import {
 } from 'recharts';
 import { useInvoices } from './InvoiceContext';
 
+/**
+ * RevenueBar Component
+ * - Displays monthly revenue based on invoice data
+ * - Maintains hover effect and smooth animations
+ */
 export default function RevenueBar() {
-    const { invoices } = useInvoices();
-    const theme = useTheme();
+    const { invoices } = useInvoices(); // Get invoices from context
+    const theme = useTheme(); // Access MUI theme
 
-    // Track which bar is currently hovered
+    // Track which bar is currently hovered for animation
     const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
     /* =========================
        Transform invoices into monthly revenue
-    ==========================*/
+    ========================== */
     const chartData = Object.values(
         invoices.reduce((acc: any, curr: any) => {
             const month = new Date(curr.date).toLocaleString('en-US', { month: 'short' });
@@ -90,7 +95,7 @@ export default function RevenueBar() {
                                 tickFormatter={(value) => `$${value}`}
                             />
 
-                            {/* --- Tooltip without large hover background --- */}
+                            {/* --- Tooltip --- */}
                             <Tooltip
                                 cursor={false}
                                 contentStyle={{
@@ -102,7 +107,7 @@ export default function RevenueBar() {
                                 itemStyle={{ color: theme.palette.primary.main }}
                             />
 
-                            {/* --- Bars with smooth hover animation --- */}
+                            {/* --- Bars with hover animation --- */}
                             <Bar dataKey="amount" radius={[6, 6, 0, 0]} barSize={40}>
                                 {chartData.map((entry: any, index: number) => {
                                     const isActive = index === activeIndex;
