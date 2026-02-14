@@ -8,22 +8,26 @@ import { RegisterSchema, RegisterInput } from '../schema/register.schema';
 export function RegisterForm() {
     const theme = useTheme();
 
+    // Initialize react-hook-form
     const {
         control,
         handleSubmit,
         reset,
         formState: { errors, isSubmitting },
     } = useForm<RegisterInput>({
-        resolver: zodResolver(RegisterSchema),
+        resolver: zodResolver(RegisterSchema), // Zod validation
         defaultValues: { fullName: '', email: '', password: '', confirmPassword: '' },
-        mode: 'onTouched',
+        mode: 'onTouched', // validate on blur
     });
 
+    // Form submit handler
     const onSubmit = async (data: RegisterInput) => {
         try {
+            // Simulate server request
             await new Promise((r) => setTimeout(r, 1500));
             console.log('Vault Secure: Profile Data Received', data);
-            reset();
+
+            reset(); // reset form fields
             alert('Security Profile Updated Successfully');
         } catch (error) {
             console.error('System Error: Failed to commit profile changes', error);
@@ -33,6 +37,7 @@ export function RegisterForm() {
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
             <Stack spacing={2}>
+                {/* Full Name Field */}
                 <Controller
                     name="fullName"
                     control={control}
@@ -52,6 +57,7 @@ export function RegisterForm() {
                     )}
                 />
 
+                {/* Email Field */}
                 <Controller
                     name="email"
                     control={control}
@@ -71,6 +77,7 @@ export function RegisterForm() {
                     )}
                 />
 
+                {/* Password Field */}
                 <Controller
                     name="password"
                     control={control}
@@ -91,6 +98,7 @@ export function RegisterForm() {
                     )}
                 />
 
+                {/* Confirm Password Field */}
                 <Controller
                     name="confirmPassword"
                     control={control}
@@ -111,6 +119,7 @@ export function RegisterForm() {
                     )}
                 />
 
+                {/* Submit Button */}
                 <Button
                     type="submit"
                     variant="contained"
