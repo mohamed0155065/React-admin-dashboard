@@ -28,7 +28,7 @@ interface DataTableProps {
  * - Theme aware
  * - Optimized using memoization
  */
-export const DataTable: FC<DataTableProps> = ({ rows }) => {
+export const DataTabel: FC<DataTableProps> = ({ rows }) => {
     const theme = useTheme();
 
     const columns: GridColDef<UserRow>[] = useMemo(
